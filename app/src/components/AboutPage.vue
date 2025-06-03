@@ -1,26 +1,30 @@
 <template>
-  <div class="about-wrapper">
-    <div class="about-content">
-      <UserAvatar 
-        :src="avatarSrc" 
-        :alt="name || 'Avatar'" 
-      />
-      
-      <UserInfo 
-        :name="name"
-        :subtitle="subtitle"
-        :description1="description1"
-        :description2="description2"
-      />
-      
-      <ActionButtons 
-        :buttons="buttons"
-        :show-contact-button="false"
-        @navigate="handleNavigate"
-      />
-      
-      <SocialLinks :socials="socials" />
+  <div>
+    <div class="about-wrapper">
+      <div class="about-content">
+        <UserAvatar 
+          :src="avatarSrc" 
+          :alt="name || 'Avatar'" 
+        />
+        
+        <UserInfo 
+          :name="name"
+          :subtitle="subtitle"
+          :description1="description1"
+          :description2="description2"
+        />
+        
+        <ActionButtons 
+          :buttons="buttons"
+          :show-contact-button="false"
+          @navigate="handleNavigate"
+        />
+        
+        <SocialLinks :socials="socials" />
+      </div>
     </div>
+
+    <TechStack :categories="techCategories" />
   </div>
 </template>
 
@@ -29,6 +33,7 @@ import UserAvatar from './UserAvatar.vue'
 import UserInfo from './UserInfo.vue'
 import ActionButtons from './ActionButtons.vue'
 import SocialLinks from './SocialLinks.vue'
+import TechStack from './TechStack.vue'
 
 const emit = defineEmits(['navigate'])
 
@@ -40,6 +45,10 @@ const props = defineProps({
   buttons: Array,
   socials: Array,
   avatarSrc: String,
+  techCategories: {
+    type: Array,
+    default: () => []
+  },
   showContactButton: {
     type: Boolean,
     default: true

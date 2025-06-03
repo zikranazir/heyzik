@@ -16,6 +16,7 @@
         :buttons="buttons"
         :socials="socials"
         :avatarSrc="avatarPath"
+        :techCategories="techCategories"
         @navigate="setActiveNav"
       />
       <PortfolioPage v-else-if="activeNav === '#portfolio'" />
@@ -62,6 +63,28 @@ const socials = [
   { title: 'GitHub', href: '#', icon: IconGitHub },
   { title: 'Twitter', href: '#', icon: IconTwitter },
   { title: 'Email', href: '#', icon: IconMail }
+]
+const techCategories = [
+  {
+    name: 'Languages',
+    items: ['Python', 'SQL', 'JavaScript', 'TypeScript']
+  },
+  {
+    name: 'Data Science & ML',
+    items: ['TensorFlow', 'PyTorch', 'scikit-learn', 'Pandas', 'NumPy']
+  },
+  {
+    name: 'Data Engineering',
+    items: ['Apache Spark', 'Kafka', 'Airflow', 'Docker', 'Kubernetes']
+  },
+  {
+    name: 'Cloud & DevOps',
+    items: ['AWS', 'GCP', 'CI/CD', 'Terraform']
+  },
+  {
+    name: 'Web Development',
+    items: ['Vue.js', 'Node.js', 'FastAPI', 'Django']
+  }
 ]
 
 // --- Medium RSS Fetch ---
