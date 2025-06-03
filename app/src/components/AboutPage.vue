@@ -2,7 +2,7 @@
   <div class="about-wrapper">
     <div class="about-content">
       <UserAvatar 
-        :src="avatarSrc || '/avatar.png'" 
+        :src="avatarSrc" 
         :alt="name || 'Avatar'" 
       />
       

@@ -15,6 +15,7 @@
         :description2="description2"
         :buttons="buttons"
         :socials="socials"
+        :avatarSrc="avatarPath"
         @navigate="setActiveNav"
       />
       <PortfolioPage v-else-if="activeNav === '#portfolio'" />
@@ -37,6 +38,8 @@ import IconLinkedIn from './components/icons/IconCommunity.vue'
 import IconGitHub from './components/icons/IconDocumentation.vue'
 import IconTwitter from './components/icons/IconEcosystem.vue'
 import IconMail from './components/icons/IconSupport.vue'
+
+const avatarPath = computed(() => `${import.meta.env.BASE_URL}avatar.png`)
 
 const name = ref('Zikra Wahyudi')
 const subtitle = ref('(He/Him)')
