@@ -8,7 +8,7 @@
 defineProps({
   src: {
     type: String,
-    default: '/avatar.png'
+    default: import.meta.env.BASE_URL + 'avatar.png'
   },
   alt: {
     type: String,
