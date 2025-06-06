@@ -6,7 +6,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: '/heyzik/', // This should match your repository name
+  base: '/', // Changed from '/heyzik/' to '/' for custom domain
   build: {
     outDir: 'dist',
     assetsDir: 'assets'
