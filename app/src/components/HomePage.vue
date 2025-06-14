@@ -12,5 +12,5 @@
 </template>
 
 <script setup>
-import '@/assets/homepage.css'
+import '@/assets/styles.css'
 </script>
