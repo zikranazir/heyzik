@@ -1,342 +1,179 @@
-<!--
-  @component PortfolioPage
-  @description A portfolio page component that displays projects in a responsive grid layout.
-              Features a modal view for detailed project information and smooth transitions.
-  @example
-  ```vue
-  <PortfolioPage />
-  ```
--->
 <template>
-  <div class="portfolio-container">
-    <h1 class="portfolio-title">My Portfolio</h1>
+  <div class="portfolio-page">
+    <div class="portfolio-header">
+      <h1 class="portfolio-title">Portfolio</h1>
+    </div>
+    
     <div class="portfolio-grid">
-      <div v-for="(project, index) in projects" 
-           :key="index" 
-           class="portfolio-item"
+      <div 
+        v-for="item in portfolioItems" 
+        :key="item.title" 
+        class="portfolio-item"
+        @click="openModal(item)"
       >
-        <div class="portfolio-card">
-          <img :src="project.image" :alt="project.title" class="portfolio-image">
-          <div class="portfolio-content">
-            <h3 class="portfolio-item-title">{{ project.title }}</h3>
-            <p class="portfolio-description">{{ project.description }}</p>
-            <div class="portfolio-tags">
-              <span v-for="tag in project.tags" 
-                    :key="tag" 
-                    class="portfolio-tag"
-              >
-                {{ tag }}
-              </span>
-            </div>
-            <div class="portfolio-links">
-              <a v-if="project.demo" 
-                 :href="project.demo" 
-                 class="portfolio-link demo"
-                 target="_blank"
-                 rel="noopener noreferrer"
-              >
-                Live Demo
-              </a>
-              <button 
-                @click="openModal(project)"
-                class="portfolio-link readmore"
-              >
-                Read More
-              </button>
-            </div>
+        <h3 class="portfolio-item-title">{{ item.title }}</h3>
+        <p class="portfolio-item-desc">{{ item.description }}</p>
+        <div class="portfolio-tech">{{ item.technologies }}</div>
+      </div>
+    </div>
+    
+    <!-- Modal -->
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <button class="modal-close" @click="closeModal">&times;</button>
+        <div class="modal-header">
+          <h2 class="modal-title">{{ selectedItem?.title }}</h2>
+          <div class="modal-tech">{{ selectedItem?.technologies }}</div>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">{{ selectedItem?.description }}</p>
+          <div class="modal-details">
+            <h3>Project Details</h3>
+            <ul>
+              <li><strong>Technologies:</strong> {{ selectedItem?.technologies }}</li>
+              <li><strong>Type:</strong> Data Analysis & Visualization</li>
+              <li><strong>Status:</strong> Completed</li>
+            </ul>
+          </div>
+          
+          <!-- CTA Buttons -->
+          <div class="modal-actions">
+            <a 
+              v-if="selectedItem?.github" 
+              :href="selectedItem.github" 
+              target="_blank" 
+              class="cta-button cta-github"
+            >
+              <svg class="cta-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              View on GitHub
+            </a>
+            <a 
+              v-if="selectedItem?.demo" 
+              :href="selectedItem.demo" 
+              target="_blank" 
+              class="cta-button cta-demo"
+            >
+              <svg class="cta-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              Live Demo
+            </a>
           </div>
         </div>
       </div>
-    </div>    <!-- Modal -->
-    <Transition name="fade">
-      <div v-if="selectedProject" class="modal-overlay" @click="closeModal">
-        <Transition name="slide-up">
-          <div class="modal-content" @click.stop>
-            <button class="modal-close" @click="closeModal">&times;</button>
-            <img 
-              :src="selectedProject.image" 
-              :alt="selectedProject.title" 
-              class="modal-image"
-            >
-            <h2 class="modal-title">{{ selectedProject.title }}</h2>
-            <div class="modal-tags">
-              <span v-for="tag in selectedProject.tags" 
-                    :key="tag" 
-                    class="portfolio-tag"
-              >
-                {{ tag }}
-              </span>
-            </div>
-            <p class="modal-description">{{ selectedProject.description }}</p>
-            <div class="modal-details">
-              <h3>Project Details</h3>
-              <p>{{ selectedProject.longDescription || 'A detailed description of the project and its technical implementation.' }}</p>
-              
-              <h3>Technical Implementation</h3>
-              <ul class="modal-tech-list">
-                <li v-for="(detail, index) in selectedProject.technicalDetails" 
-                    :key="index"
-                >
-                  {{ detail }}
-                </li>
-              </ul>
-              
-              <h3>Key Features</h3>
-              <ul class="modal-features-list">
-                <li v-for="(feature, index) in selectedProject.features" 
-                    :key="index"
-                >
-                  {{ feature }}
-                </li>
-              </ul>
-            </div>
-            <div class="modal-footer">
-              <a v-if="selectedProject.demo" 
-                 :href="selectedProject.demo" 
-                 class="portfolio-link demo"
-                 target="_blank"
-                 rel="noopener noreferrer"
-              >
-                View Live Demo
-              </a>
-            </div>
-          </div>
-        </Transition>
-      </div>
-    </Transition>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import yaml from 'js-yaml'
 
-/**
- * Reference to the currently selected project for the modal view
- * @type {import('vue').Ref<{
- *   title: string,
- *   description: string,
- *   longDescription?: string,
- *   image: string,
- *   tags: string[],
- *   demo?: string,
- *   github?: string,
- *   technicalDetails?: string[],
- *   features?: string[]
- * } | null>}
- */
-const selectedProject = ref(null)
+const portfolioItems = ref([])
+const showModal = ref(false)
+const selectedItem = ref(null)
 
-/**
- * Opens the modal with the selected project details
- * @param {Object} project - The project to display in the modal
- * @param {string} project.title - Project title
- * @param {string} project.description - Short project description
- * @param {string} [project.longDescription] - Detailed project description
- * @param {string} project.image - URL of the project image
- * @param {string[]} project.tags - Array of technology tags
- * @param {string} [project.demo] - Demo URL
- * @param {string} [project.github] - GitHub repository URL
- * @param {string[]} [project.technicalDetails] - Array of technical specifications
- * @param {string[]} [project.features] - Array of project features
- */
-function openModal(project) {
-  selectedProject.value = project
-  document.body.style.overflow = 'hidden' // Prevent body scroll when modal is open
+const openModal = (item) => {
+  selectedItem.value = item
+  showModal.value = true
+  document.body.style.overflow = 'hidden' // Prevent background scrolling
 }
 
-/**
- * Closes the modal and resets the selected project
- */
-function closeModal() {
-  selectedProject.value = null
-  document.body.style.overflow = '' // Restore body scroll
+const closeModal = () => {
+  showModal.value = false
+  selectedItem.value = null
+  document.body.style.overflow = 'auto' // Restore scrolling
 }
 
-/**
- * Portfolio projects data
- * @type {Array<{
- *   title: string,
- *   description: string,
- *   longDescription?: string,
- *   image: string,
- *   tags: string[],
- *   demo?: string,
- *   github?: string,
- *   technicalDetails?: string[],
- *   features?: string[]
- * }>}
- */
-const projects = [
-  {
-    title: "Project 1",
-    description: "Description of project 1. Add details about what the project does and the technologies used.",
-    longDescription: "An in-depth look at Project 1. This project aimed to solve specific problems in the industry using cutting-edge technologies. The implementation involved careful consideration of user experience and performance optimization.",
-    image: "https://picsum.photos/800/600?random=1",
-    tags: ["Vue", "Python", "Machine Learning"],
-    demo: "https://demo1.com",
-    technicalDetails: [
-      "Implemented using Vue 3 Composition API",
-      "Python backend with FastAPI",
-      "Machine Learning model trained on custom dataset",
-      "Real-time data processing pipeline"
-    ],
-    features: [
-      "Real-time data visualization",
-      "Predictive analytics dashboard",
-      "Custom reporting system",
-      "Advanced filtering capabilities"
-    ]
-  },
-  {
-    title: "Project 2",
-    description: "Description of project 2. Add details about what the project does and the technologies used.",
-    image: "https://picsum.photos/800/600?random=2",
-    tags: ["React", "Node.js", "MongoDB"],
-    demo: "https://demo2.com",
-    github: "https://github.com/username/project2"
-  },
-  {
-    title: "Project 3",
-    description: "Description of project 3. Add details about what the project does and the technologies used.",
-    image: "https://picsum.photos/800/600?random=3",
-    tags: ["Data Science", "Python", "TensorFlow"],
-    demo: "https://demo3.com",
-    github: "https://github.com/username/project3"
-  },
-{
-    title: "Project 4",
-    description: "Description of project 4. Add details about what the project does and the technologies used.",
-    image: "https://picsum.photos/800/600?random=4",
-    tags: ["Data Science", "Python", "TensorFlow"],
-    demo: "https://demo3.com",
-    github: "https://github.com/username/project3"
+async function loadPortfolioData() {
+  try {
+    const response = await fetch('/src/data/portfolio.yaml')
+    const yamlText = await response.text()
+    const data = yaml.load(yamlText)
+    portfolioItems.value = data.portfolio
+  } catch (error) {
+    console.error('Error loading portfolio data:', error)
+    portfolioItems.value = []
   }
-  // Add more projects as needed
-]
+}
+
+onMounted(async () => {
+  await loadPortfolioData()
+})
 </script>
 
 <style scoped>
-.portfolio-container {
-  padding: 2rem;
-  max-width: 1400px;
+.portfolio-page {
+  height: calc(100vh - 70px);
+  padding: 2rem 2rem;
+  max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  overflow-y: auto;
+}
+
+.portfolio-header {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .portfolio-title {
-  text-align: center;
-  color: #22223b;
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
+  font-size: 2.8rem;
   font-weight: 700;
+  color: #232323;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+.portfolio-subtitle {
+  font-size: 1.1rem;
+  color: #6c7b95;
+  font-weight: 400;
 }
 
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
 }
 
 .portfolio-item {
-  break-inside: avoid;
-}
-
-.portfolio-card {
-  background: #ffffff;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(124,93,250,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.portfolio-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 30px rgba(124,93,250,0.15);
-}
-
-.portfolio-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.portfolio-content {
-  padding: 1.5rem;
-}
-
-.portfolio-item-title {
-  color: #22223b;
-  font-size: 1.25rem;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-}
-
-.portfolio-description {
-  color: #6b6b8d;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-}
-
-.portfolio-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.portfolio-tag {
-  background: #f3f0ff;
-  color: #7c5dfa;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-.portfolio-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.portfolio-link {
-  flex: 1;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-
-.portfolio-link.demo {
-  background: #7c5dfa;
-  color: white;
-}
-
-.portfolio-link.demo:hover {
-  background: #6c4ce0;
-  transform: translateY(-2px);
-}
-
-.portfolio-link.readmore {
-  background: #f3f0ff;
-  color: #7c5dfa;
-  border: none;
+  background: #fafbfc;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  padding: 2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
 
-.portfolio-link.readmore:hover {
-  background: #e6e0ff;
-  transform: translateY(-2px);
+.portfolio-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* 
- * Modal Styles
- * The modal system uses a combination of fixed positioning and flexbox
- * to create a centered, responsive modal with a blurred backdrop.
- * Includes smooth transitions for opening/closing animations.
- */
+.portfolio-item-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #232323;
+  margin-bottom: 1rem;
+}
+
+.portfolio-item-desc {
+  font-size: 1rem;
+  color: #6c7b95;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+.portfolio-tech {
+  font-size: 0.9rem;
+  color: #7c5dfa;
+  font-weight: 500;
+}
+
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -345,185 +182,216 @@ const projects = [
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
   padding: 2rem;
-  backdrop-filter: blur(5px);
 }
 
 .modal-content {
   background: white;
-  border-radius: 24px;
-  padding: 2rem;
-  max-width: 800px;
+  border-radius: 16px;
+  max-width: 600px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer/Edge */
+  animation: modalSlideIn 0.3s ease-out;
 }
 
-.modal-content::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-close {
   position: absolute;
-  right: 1.5rem;
-  top: 1.5rem;
+  top: 1rem;
+  right: 1rem;
   background: none;
   border: none;
   font-size: 2rem;
-  color: #22223b;
+  color: #6c7b95;
   cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s ease;
 }
 
 .modal-close:hover {
-  background: #f3f0ff;
-  color: #7c5dfa;
+  color: #232323;
+  background: #f5f5f5;
 }
 
-.modal-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 1.5rem;
+.modal-header {
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #e1e5e9;
 }
 
 .modal-title {
-  font-size: 2rem;
-  color: #22223b;
-  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #232323;
+  margin-bottom: 0.5rem;
+  padding-right: 3rem;
 }
 
-.modal-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+.modal-tech {
+  font-size: 0.9rem;
+  color: #7c5dfa;
+  font-weight: 500;
+}
+
+.modal-body {
+  padding: 2rem;
 }
 
 .modal-description {
-  color: #6b6b8d;
   font-size: 1.1rem;
+  color: #6c7b95;
   line-height: 1.6;
   margin-bottom: 2rem;
 }
 
-.modal-details {
-  h3 {
-    color: #22223b;
-    font-size: 1.3rem;
-    margin: 1.5rem 0 1rem 0;
-  }
-
-  p {
-    color: #6b6b8d;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-  }
+.modal-details h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #232323;
+  margin-bottom: 1rem;
 }
 
-.modal-tech-list,
-.modal-features-list {
-  list-style: disc;
-  padding-left: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #6b6b8d;
-  
-  li {
-    margin-bottom: 0.5rem;
-    line-height: 1.5;
-  }
+.modal-details ul {
+  list-style: none;
+  padding: 0;
 }
 
-.modal-footer {
-  margin-top: 2rem;
+.modal-details li {
+  padding: 0.5rem 0;
+  color: #6c7b95;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.modal-details li:last-child {
+  border-bottom: none;
+}
+
+.modal-details strong {
+  color: #232323;
+}
+
+.modal-actions {
   display: flex;
-  justify-content: center;
   gap: 1rem;
+  margin-top: 2rem;
 }
 
-/* 
- * Transitions
- * Two transition types are used:
- * 1. Fade - For the modal overlay backdrop
- * 2. Slide-up - For the modal content entrance/exit
- */
-/* Fade transition for overlay */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.cta-icon {
+  width: 18px;
+  height: 18px;
 }
 
-/* Slide up transition for modal */
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: all 0.3s ease;
+.cta-github {
+  background: #232323;
+  color: white;
 }
 
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(30px);
-  opacity: 0;
+.cta-github:hover {
+  background: #333333;
+  transform: translateY(-1px);
 }
 
-/* 
- * Responsive Design Breakpoints
- * - 1200px: Switch from 3 columns to 2 columns
- * - 768px: Single column layout, adjusted spacing and font sizes
- */
-@media (max-width: 1200px) {
-  .portfolio-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.cta-demo {
+  background: #7c5dfa;
+  color: white;
+}
+
+.cta-demo:hover {
+  background: #6b4ce6;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
-  .portfolio-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .portfolio-container {
-    padding: 1rem;
+  .portfolio-page {
+    height: calc(100vh - 60px);
+    padding: 2rem 1rem;
   }
   
   .portfolio-title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
+    font-size: 2.2rem;
   }
-
+  
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .portfolio-item {
+    padding: 1.5rem;
+  }
+  
   .modal-overlay {
     padding: 1rem;
   }
-
-  .modal-content {
-    padding: 1.5rem;
-    border-radius: 16px;
+  
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
   }
-
+  
+  .modal-body {
+    padding: 1.5rem;
+  }
+  
   .modal-title {
     font-size: 1.5rem;
+    padding-right: 2.5rem;
   }
-
-  .modal-image {
-    height: 200px;
+  
+  .modal-close {
+    top: 0.8rem;
+    right: 0.8rem;
+    width: 35px;
+    height: 35px;
+    font-size: 1.5rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .cta-button {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .cta-icon {
+    width: 16px;
+    height: 16px;
   }
 }
 </style>

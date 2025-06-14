@@ -1,217 +1,153 @@
 <template>
-  <div class="contact-container">
-    <div class="contact-card">
-      <h2 class="contact-title">Get In Touch</h2>
-      <p class="contact-description">
-        Feel free to reach out if you want to collaborate with me, or simply have a chat.
-      </p>
-      
-      <form class="contact-form" @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input 
-            id="name"
-            v-model="formData.name"
-            type="text"
-            required
-            placeholder="Enter your name"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input 
-            id="email"
-            v-model="formData.email"
-            type="email"
-            required
-            placeholder="Enter your email"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="company">Company</label>
-          <input 
-            id="company"
-            v-model="formData.company"
-            type="text"
-            placeholder="Enter your company name"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea 
-            id="message"
-            v-model="formData.message"
-            required
-            rows="4"
-            placeholder="What would you like to say?"
-          ></textarea>
-        </div>
-
-        <button type="submit" class="submit-button" :disabled="isSubmitting">
-          {{ isSubmitting ? 'Sending...' : 'Send Message' }}
-        </button>
-      </form>
+  <div class="contact-page">
+    <div class="contact-header">
+      <h1 class="contact-title">Contact</h1>
+      <p class="contact-subtitle">Let's connect and collaborate</p>
+    </div>
+    
+    <div class="contact-content">
+      <div class="contact-form">
+        <form @submit.prevent="handleSubmit">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" v-model="form.name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="form.email" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" v-model="form.message" rows="5" required></textarea>
+          </div>
+          
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 
-const formData = reactive({
+const form = ref({
   name: '',
   email: '',
-  company: '',
   message: ''
 })
 
-const isSubmitting = ref(false)
-
-async function handleSubmit() {
-  isSubmitting.value = true
-  
-  try {
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Clear form
-    formData.name = ''
-    formData.email = ''
-    formData.company = ''
-    formData.message = ''
-    
-    alert('Message sent successfully!')
-  } catch (error) {
-    console.error('Error submitting form:', error)
-    alert('Failed to send message. Please try again.')
-  } finally {
-    isSubmitting.value = false
-  }
+const handleSubmit = () => {
+  // For now, just create a mailto link
+  const subject = encodeURIComponent('Contact from Portfolio Website')
+  const body = encodeURIComponent(`Name: ${form.value.name}\nEmail: ${form.value.email}\n\nMessage:\n${form.value.message}`)
+  window.location.href = `mailto:zikranazir@protonmail.com?subject=${subject}&body=${body}`
 }
 </script>
 
 <style scoped>
-.contact-container {
-  padding: 1rem;
-  max-width: 800px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.contact-page {
+  height: calc(100vh - 70px);
+  padding: 2rem 2rem;
+  max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  overflow-y: auto;
 }
 
-.contact-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 24px;
-  padding: 3rem;
-  box-shadow: 
-    0 8px 32px rgba(124,93,250,0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.contact-header {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .contact-title {
-  text-align: center;
-  color: #22223b;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2.8rem;
   font-weight: 700;
+  color: #232323;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.01em;
 }
 
-.contact-description {
-  text-align: center;
-  color: #6b6b8d;
+.contact-subtitle {
   font-size: 1.1rem;
-  margin-bottom: 2.5rem;
-  line-height: 1.6;
+  color: #6c7b95;
+  font-weight: 400;
 }
 
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.contact-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-form h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #232323;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
-  color: #22223b;
-  font-size: 0.95rem;
+  display: block;
   font-weight: 500;
+  color: #232323;
+  margin-bottom: 0.5rem;
 }
 
 .form-group input,
 .form-group textarea {
-  padding: 0.8rem 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  font-family: inherit;
   font-size: 1rem;
-  color: #22223b;
-  background: #ffffff;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: #7c5dfa;
-  box-shadow: 0 0 0 4px rgba(124,93,250,0.1);
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: #a0a0a0;
-}
-
-.submit-button {
-  background: linear-gradient(135deg, #7c5dfa 0%, #a3c4f3 100%);
+.submit-btn {
+  background: #000000;
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 12px;
+  padding: 0.875rem 2rem;
+  border-radius: 6px;
+  font-family: inherit;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
+  transition: background-color 0.2s;
 }
 
-.submit-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #6c4ce0 0%, #8fb3e8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(124,93,250,0.2);
-}
-
-.submit-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+.submit-btn:hover {
+  background: #0b610f;
 }
 
 @media (max-width: 768px) {
-  .contact-container {
-    padding: 1rem;
+  .contact-page {
+    height: calc(100vh - 60px);
+    padding: 2rem 1rem;
   }
-
-  .contact-card {
-    padding: 2rem 1.5rem;
-    border-radius: 20px;
-  }
-
+  
   .contact-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
-
-  .contact-description {
-    font-size: 1rem;
-    margin-bottom: 2rem;
+  
+  .contact-form h2 {
+    font-size: 1.6rem;
   }
 }
 </style>
