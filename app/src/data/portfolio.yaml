@@ -28,9 +28,3 @@ portfolio:
     technologies: "Apache Kafka • Spark • MongoDB"
     github: "https://github.com/zikranazir/realtime-data-streaming"
     demo: "https://streaming-demo.example.com"
-    
-  - title: "Business Intelligence Suite"
-    description: "Comprehensive BI solution with automated reporting and KPI tracking"
-    technologies: "Power BI • SQL Server • Azure"
-    github: "https://github.com/zikranazir/bi-suite"
-    demo: "https://bi-suite-demo.powerbi.com"
