@@ -89,7 +89,7 @@ const closeModal = () => {
 
 async function loadPortfolioData() {
   try {
-    const response = await fetch('/portfolio.yaml')
+    const response = await fetch(`${import.meta.env.BASE_URL}portfolio.yaml`)
     const yamlText = await response.text()
     const data = yaml.load(yamlText)
     portfolioItems.value = data.portfolio

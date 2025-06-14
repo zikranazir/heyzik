@@ -6,7 +6,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: '/', // Changed from '/heyzik/' to '/' for custom domain
+  base: '/heyzik/', // Correct base path for GitHub Pages deployment
   build: {
     outDir: 'dist',
     assetsDir: 'assets'
