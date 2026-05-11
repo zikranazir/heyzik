@@ -27,15 +27,7 @@
         </div>
         <div class="modal-body">
           <p class="modal-description">{{ selectedItem?.description }}</p>
-          <div class="modal-details">
-            <h3>Project Details</h3>
-            <ul>
-              <li><strong>Technologies:</strong> {{ selectedItem?.technologies }}</li>
-              <li><strong>Type:</strong> Data Analysis & Visualization</li>
-              <li><strong>Status:</strong> Completed</li>
-            </ul>
-          </div>
-          
+
           <!-- CTA Buttons -->
           <div class="modal-actions">
             <a 
@@ -262,32 +254,6 @@ onMounted(async () => {
   color: #6c7b95;
   line-height: 1.6;
   margin-bottom: 2rem;
-}
-
-.modal-details h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #232323;
-  margin-bottom: 1rem;
-}
-
-.modal-details ul {
-  list-style: none;
-  padding: 0;
-}
-
-.modal-details li {
-  padding: 0.5rem 0;
-  color: #6c7b95;
-  border-bottom: 1px solid #f5f5f5;
-}
-
-.modal-details li:last-child {
-  border-bottom: none;
-}
-
-.modal-details strong {
-  color: #232323;
 }
 
 .modal-actions {
